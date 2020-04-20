@@ -1,5 +1,5 @@
 module.exports = {
-  publicPath:'/vue/',
+  publicPath:'/app/admin',
   "transpileDependencies": [
     "vuetify"
   ]

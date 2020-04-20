@@ -2,7 +2,7 @@ import Vue from 'vue';
 import axios from 'axios'; 
 import router from './../router/index';
 
-axios.defaults.baseURL = 'http://nsbhospedagemweb.com/DPC/index.php';
+axios.defaults.baseURL = 'https://nsbhospedagemweb.com/DPC/index.php';
 
 Vue.use({
     install(Vue){

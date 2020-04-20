@@ -82,7 +82,7 @@
                 localStorage.setItem("token_dpc", res.data.token);
                 localStorage.setItem("codigo_usuario", res.data.dadosUsuario.codigoPessoa);
                 this.$store.commit('setLoggedIn');
-                this.$router.push({name: 'acompanhamento'},{});
+                this.$router.push({name: 'voluntario'},{});
             },
             () =>{
                 this.isLoading = false;
