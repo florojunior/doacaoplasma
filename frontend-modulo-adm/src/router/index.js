@@ -10,6 +10,8 @@ import Formulario from '../components/Formulario'
 import Questionario from '../components/Questionario'
 import Acompanhamento from '../components/Acompanhamento'
 import Voluntario from '../components/Voluntario'
+import Local from '../components/Local'
+import LocalAgendamentoHorario from '../components/LocalAgendamentoHorario'
 
 Vue.use(VueRouter)
 
@@ -63,7 +65,18 @@ Vue.use(VueRouter)
     path: '/voluntario',
     name: 'voluntario',
     component: Voluntario
+  },
+  {
+    path: '/local-agendamento',
+    name: 'local-agendamento',
+    component: Local
+  },
+  {
+    path: '/local-agendamento-horario',
+    name: 'local-agendamento-horario',
+    component: LocalAgendamentoHorario
   }
+  
 ]
 
 const router = new VueRouter({

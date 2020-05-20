@@ -161,6 +161,11 @@ export default {
                 descricao:'Questionario',
                 path:'/questionario',
                 icon:'mdi-cube-outline'
+            },
+            {
+                descricao:'Agendamento',
+                path:'/agendamento',
+                icon:'mdi-cube-outline'
             }
         ],
         userLogged: {},

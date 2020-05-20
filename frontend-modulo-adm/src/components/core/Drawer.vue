@@ -176,6 +176,16 @@ export default {
                 path:'/voluntario',
                 icon:'mdi-file-multiple'
             },
+            {
+                descricao:'Locais Agendamento',
+                path:'/local-agendamento',
+                icon:'mdi-file-multiple'
+            },
+            {
+                descricao:'Locais Agendamento Horários',
+                path:'/local-agendamento-horario',
+                icon:'mdi-file-multiple'
+            },
         ],
         userLogged: {},
         mudarSenha: {},

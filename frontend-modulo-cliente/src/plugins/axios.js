@@ -12,8 +12,8 @@ Vue.use({
 
 axios.interceptors.request.use(function (config) {  
   
-  //if(localStorage.getItem("token_dpc")!="null")
-  //  config.headers['Authorization'] = `Token ${localStorage.getItem("token_dpc")}`;
+  if(localStorage.getItem("token_dpc")!="null")
+    config.headers['Authorization'] = `Bearer ${localStorage.getItem("token_dpc")}`;
     
     config.headers["Access-Control-Allow-Origin", "*"]; 
     config.headers["Access-Control-Allow-Credentials", "true"]; 

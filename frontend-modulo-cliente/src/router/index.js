@@ -10,6 +10,8 @@ import Formulario from '../components/Formulario'
 import Questionario from '../components/Questionario'
 import Acompanhamento from '../components/Acompanhamento'
 import Voluntario from '../components/Voluntario'
+import Agendamento from '../components/Agendamento'
+
 
 Vue.use(VueRouter)
 
@@ -63,6 +65,11 @@ Vue.use(VueRouter)
     path: '/voluntario',
     name: 'voluntario',
     component: Voluntario
+  },
+  {
+    path: '/agendamento',
+    name: 'agendamento',
+    component: Agendamento
   }
 ]
 
