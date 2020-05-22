@@ -1,11 +1,16 @@
 <template>
-    <v-container fluid>
-        <v-row>
-            <v-col>
-                <v-card>
+    <div style="width: 100%">
+        <v-btn style="width:100%" color="white" @click="openDialog()" outlined :loading="loading">
+          <v-icon left>
+            sentiment_very_satisfied
+          </v-icon>
+            INICIAR TRIAGEM
+        </v-btn>
+        <v-dialog v-model="dialog" persistent max-width="600px">
+            <v-card>
                     <v-card-title>
                         <span>
-                            Questionário Pré-triagem
+                            Questionario Pré-triagem
                         </span>
                     </v-card-title>
                     <v-card-text>
@@ -41,18 +46,21 @@
                                     <v-text-field label="Resposta*" required outlined v-model="respostas[index].numero" :rules="requiredRule"></v-text-field>
                                 </v-col>
                             </v-row>
-                            <v-row>
-                                <v-col>
-                                    <v-btn color="primary" outlined style="width:100%" @click="save()" large :loading="loading">Enviar Resposta</v-btn>
-                                </v-col>
-                            </v-row>
-
                         </v-form>
                     </v-card-text>
+                    <v-card-actions>
+                        <v-row>
+                            <v-col cols="6" class="d-flex justify-center">
+                                <v-btn style="width: 100%" color="blue darken-1" outlined large @click="dialog = false">Cancelar</v-btn>
+                            </v-col>
+                            <v-col cols="6" class="d-flex justify-center">
+                                <v-btn style="width: 100%" color="primary" outlined @click="save()" large :loading="loading">Enviar</v-btn>
+                            </v-col>
+                        </v-row>
+                    </v-card-actions>
                 </v-card>
-            </v-col>
-        </v-row>
-    </v-container>
+        </v-dialog>
+    </div>    
 </template>
 
 <script>
@@ -64,17 +72,26 @@ export default {
         requiredRule: [
             v => (!!v) || 'Campo é requirido'
         ],
-        loading: false
+        loading: false,
+        dialog : false
     }),
-    created:function(){
-        this.getAll();
-    },
     methods:{
+        openDialog(respostas){
+            this.getAll();
+            if(respostas !== undefined){
+                this.respostas = respostas;
+            }else{
+                this.respostas = [];
+            }
+            this.dialog = true;
+        },
         getPerguntas(){
 
         },
         getAll(){
+            this.loading = true;
             this.$http.get('/pergunta-parametro').then(res => {
+                this.loading = false;
                 this.perguntasParametroList = res.data;
                 this.genarateAnswer(this.perguntasParametroList.perguntas);
             });

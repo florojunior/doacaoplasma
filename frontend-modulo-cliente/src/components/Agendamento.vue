@@ -1,18 +1,12 @@
 <template>
-    <v-container fluid>
-          <v-row align="center" align-content="stretch" justify="end">
-              <v-col cols="10">
-                  <div class="display">
-                      Meus Agendamentos
-                  </div>
-              </v-col>
-              <v-col align="end" align-content="stretch" justify="end" cols="2">
-                  <v-btn color="primary" @click="openDialog()">
-                      Novo Agendamento
-                  </v-btn>
-              </v-col>     
-          </v-row>
-          <v-row>
+<div style="width: 100%">
+        <v-btn style="width:100%" color="white" @click="openDialog()" outlined :loading="loading">
+          <v-icon left>
+            sentiment_very_satisfied
+          </v-icon>
+            Agendar Doacao
+        </v-btn>
+         <!-- <v-row>
               <v-col>
                   <v-alert type="success" v-if="sucessMessage">
                     Operação realizada com sucesso.
@@ -40,17 +34,17 @@
                   </template>
                   </v-data-table>
               </v-col>
-          </v-row>
+          </v-row>-->
           <!-- DIALOG -->
           <v-dialog v-model="dialog" persistent max-width="600px">
             <v-form
               ref="form"
               v-model="formValidated"
-              lazy-validation
+              lazy-validation="false"
             >
               <v-card>
                   <v-card-title>
-                      <span class="headline">{{agendamento.codigo ==null ? 'Inserir Agendamento' : 'Atualizar Agendamento'}}</span>
+                      <span class="headline">{{agendamento.codigo ==null ? 'Agendamento' : 'Agendamento'}}</span>
                   </v-card-title>
                   <v-card-text>
                       <v-container>
@@ -63,7 +57,8 @@
                                   label="Selecione o local"
                                   required
                                   item-text="descricao" 
-                                  item-value="codigo"                       
+                                  item-value="codigo"
+                                  :loading="isLoading"                       
                                 ></v-select>
                               </v-col>
                               <v-col>
@@ -78,37 +73,51 @@
                                   <template v-slot:activator="{ on }">
                                     <v-text-field
                                       v-model="dateFormatted"
-                                      label="Picker without buttons"
-                                      prepend-icon="event"
+                                      label="Selecione a data"
                                       readonly
                                       v-on="on"
                                     ></v-text-field>
                                   </template>
-                                  <v-date-picker v-model="picker" @input="menu2 = false"></v-date-picker>
+                                  <v-date-picker v-model="picker" :min="dateActual" @input="menu2 = false"></v-date-picker>
                                 </v-menu>
                               </v-col>
-                              <v-col cols="12" sm="12">
-                                <v-select
-                                  v-model="agendamento.horario"
-                                  :items="horarioList"
-                                  item-text="hora"
-                                  return-object
-                                  label="Selecione o horário"
-                                  persistent-hint
-                                ></v-select>
-                              </v-col>                              
+                              
+                              <v-expansion-panels :value="panels">
+                                <v-expansion-panel value="0"
+                                >
+                                  <v-expansion-panel-header>Horários disponiveis
+                                    <template v-slot:actions>
+                                      <v-icon color="teal">$expand</v-icon>
+                                    </template>
+                                  </v-expansion-panel-header>
+                                  <v-expansion-panel-content>
+                                    <v-row>
+                                      <v-col v-for="horarioItem in horarioList" :key="horarioItem.codigo" cols="6"  class="d-flex justify-center">
+                                        <v-chip
+                                          :color="horarioItem.hora == horarioSelecionado.hora ? 'green': 'blue'"
+                                          text-color="white"
+                                          @click="selecionaHorario(horarioItem)"
+                                        >
+                                          {{horarioItem.hora}}
+                                          <v-icon right color="white">{{horarioItem.hora == horarioSelecionado.hora ? 'check': 'mdi-av-timer'}}</v-icon>
+                                        </v-chip>
+                                      </v-col>
+                                    </v-row>                                   
+                                  </v-expansion-panel-content>
+                                </v-expansion-panel>
+                              </v-expansion-panels>                              
                             </v-row>
                       </v-container>
                   </v-card-text>
                   <v-card-actions>
                       <v-spacer></v-spacer>
-                      <v-btn color="blue darken-1" text @click="dialog = false">Fechar</v-btn>
-                      <v-btn color="blue darken-1" text @click="save()">Salvar</v-btn>
+                      <v-btn color="blue darken-1" text @click="dialog = false; $refs.form.reset();">Fechar</v-btn>
+                      <v-btn color="blue darken-1" text @click="save()" :loading="isLoading">Salvar</v-btn>
                   </v-card-actions>
               </v-card>
               </v-form>
-          </v-dialog>        
-    </v-container>  
+          </v-dialog>
+  </div>        
 </template>
 
 <script>
@@ -119,11 +128,16 @@ export default {
   created: function(){
       this.getAll();
       this.getListLocais();
-            
+      this.getHorarios();      
   },
   meusAgendamentosList: [],
   data: () => ({
+    loading: false,
+    horarioSelecionado:{hora:0},
+    panels:[1],
     date: new Date().toISOString().substr(0, 10),
+    dateActual: new Date().toISOString().substr(0, 10),
+    isLoading: false,
     menu2: false,
     sucessMessage: false,
     picker: new Date().toISOString().substr(0, 10),
@@ -170,6 +184,9 @@ export default {
     }
   },
   methods:{
+    selecionaHorario(horario){
+      this.horarioSelecionado = horario;
+    },
     openDialog(agendamento){
       if(agendamento !== undefined){
         this.agendamento = agendamento;
@@ -179,32 +196,41 @@ export default {
       this.dialog = true;
     },
     save(){
+      this.isLoading = true;
       if(this.$refs.form.validate()){
+        this.agendamento.data = this.picker;
+        this.agendamento.status = "T";
+        this.agendamento.hora = this.horarioSelecionado.hora;
         if(this.agendamento.codigo==null){
-        this.agendamento.ativo='T';
-        this.sucessMessage = true;
-        this.insert(this.agendamento).then(() => {
-            this.dialog=false;
-            this.getAll();
-            setTimeout(()=>{ this.sucessMessage = false; }, 3000);
+          this.agendamento.ativo='T';
+          this.sucessMessage = true;
+          this.insert(this.agendamento).then(() => {
+              this.dialog=false;
+              this.getAll();
+              this.isLoading = false;
+              setTimeout(()=>{ this.sucessMessage = false; }, 3000);
         })
         }else{
           this.sucessMessage = true;
           this.update(this.agendamento).then(() => {
               this.dialog=false;
               this.getAll();
+              this.isLoading = false;
               setTimeout(()=>{ this.sucessMessage = false; }, 3000);
           });
         }
+        this.$refs.form.reset();
       }      
     },
     getHorarios(){
+      this.isLoading = true;
       this.$http.get('/disponibilidade-agendamento/',{
         params:{
           codigoLocal: 1,
           data: this.dateFormatted
         }
       }).then(res => {
+        this.isLoading = false;
         this.horarioList = res.data;
       });
     },
@@ -215,24 +241,26 @@ export default {
       });
     },
     getAll(){
-      this.$http.get('/tipo-pergunta').then(res => {
+      /*this.$http.get('/agendamento').then(res => {
         this.meusAgendamentosList = res.data;
-      });
+      });*/
     },
     getListLocais(){
+      this.isLoading = true;
       this.$http.get('/local-agendamento/',{
         params:{
           codigoEmpresa:1
         }
       }).then(res => {
         this.localList = res.data;
+        this.isLoading = false;
       });
     },
     update(agendamento){
-      return this.$http.put('/tipo-pergunta',agendamento);
+      return this.$http.put('/agendamento',agendamento);
     },
     insert(agendamento){
-      return this.$http.post('/tipo-pergunta',agendamento);
+      return this.$http.post('/agendamento',agendamento);
     },
     getColor (ativo) {
         if (ativo == 'T') return 'green'

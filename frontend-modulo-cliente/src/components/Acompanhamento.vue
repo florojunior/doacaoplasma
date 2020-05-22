@@ -1,73 +1,126 @@
 <template>
     <v-container>
         <v-card>
-            <v-card-title>
-                <v-row class="d-flex justify-center align-center">
-                    <v-col cols="12" class="d-flex justify-center align-center">
-                        <h1 class="title font-weight-medium" color="primary" style="text-align: center;">Seu Status :)</h1>
+            <v-card-text style="height: 100%">
+                <v-row style="width:100%; height: 100%">
+                    <v-col cols="12">
+                        <v-card
+                            color="blue"
+                            dark
+                            outlined
+                            raised
+                            elevation
+                        >
+                            <div class="d-flex flex-no-wrap justify-space-between">
+                                <div style="width: 100%">
+                                    <v-card-title
+                                        class="headline"
+                                        style="display: flex;justify-content: space-between;"
+                                    >   
+                                        Pré-triagem
+                                        <v-icon right>check</v-icon>
+                                    </v-card-title>
+                                    <v-card-subtitle v-text="'Responda o questionário. É simples e rápido. :D'">                                        
+                                    </v-card-subtitle>
+                                    <v-card-actions>
+                                        <Questionario/>
+                                    </v-card-actions>
+                                </div>
+                            </div>
+                        </v-card>
                     </v-col>
-                    <v-col cols="12" class="d-flex justify-center align-center">
-                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcS7YtQSAUawe-N13IDCUYFjRocjDLb5WeS2Myewbh9whmJ_bqDW&usqp=CAU" alt="">
-                    </v-col>
+                    <v-col cols="12" v-if="agendamentoResult==null">
+                        <v-card
+                            color="green"
+                            dark
+                            outlined
+                            raised
+                            elevation
+                        >
+                            <div class="d-flex flex-no-wrap justify-space-between">
+                                <div style="width: 100%">
+                                    <v-card-title
+                                        class="headline"
+                                        style="display: flex;justify-content: space-between;"
+                                    >   
+                                        Agendar doação
+                                        <v-icon right>calendar_today</v-icon>
+                                    </v-card-title>
+                                    <v-card-subtitle v-text="'Veja o melhor horário para você e agenda sua doação :D'"></v-card-subtitle>
+                                    <v-card-actions>
+                                        <Agendamento/>
+                                    </v-card-actions>
+                                </div>
+                            </div>
+                        </v-card>
+                    </v-col>  
+                    <v-col cols="12" v-if="agendamentoResult!=null">
+                        <v-card
+                            color="orange"
+                            dark
+                            outlined
+                            raised
+                            elevation
+                        >
+                            <div class="d-flex flex-no-wrap justify-space-between">
+                                <div style="width: 100%">
+                                    <v-card-title
+                                        class="headline"
+                                        style="display: flex;justify-content: space-between;"
+                                    >   
+                                        Doação
+                                        <v-icon right>calendar_today</v-icon>
+                                    </v-card-title>
+                                    <v-card-subtitle v-text="'Você possui uma doação agendada para o dia'+ agendamentoResult.data"></v-card-subtitle>
+                                    <v-card-actions>
+                                        <v-btn style="width:100%" color="white" @click="openDialog()" outlined>
+                                            <v-icon left>
+                                                cancel
+                                            </v-icon>
+                                                CANCELAR AGENDAMENTO  
+                                        </v-btn>
+                                    </v-card-actions>
+                                </div>
+                            </div>
+                        </v-card>
+                    </v-col>  
                 </v-row>
-                
-            </v-card-title>
-            <v-card-text>
-                <v-timeline :dense="$vuetify.breakpoint.smAndDown" :reverse="true">
-                    <v-timeline-item
-                        color="blue lighten-1"
-                        fill-dot
-                        >
-                        <v-card>
-                            <v-card-title class="blue lighten-1">
-                                <v-icon
-                                    dark
-                                    size="32"
-                                    class="mr-4"
-                                >
-                                    check
-                                </v-icon>
-                                <h2 class="subtitle-1 white--text font-weight-light">Pré-Cadastro Realizado</h2>
-                            </v-card-title>
-                        </v-card>
-                    </v-timeline-item>
-
-                    <v-timeline-item
-                        :color="status.passou=='T'?'blue lighten-1':'red lighten-1'"
-                        fill-dot
-                        v-for="status in listStatus"
-                        :key="status"
-                        >
-                        <v-card>
-                            <v-card-title class="lighten-1" :class="status.passou=='T'?'blue':'red'">
-                                <v-icon
-                                    dark
-                                    size="32"
-                                    class="mr-4"
-                                >
-                                    {{status.passou=='T'?'check':'mdi-cancel'}}
-                                </v-icon>
-                                <h2 class="subtitle-1 white--text font-weight-light">{{status.descricao}}</h2>
-                            </v-card-title>
-                        </v-card>
-                    </v-timeline-item>
-                </v-timeline>
             </v-card-text>
         </v-card>
     </v-container>
 </template>
 <script>
+
+import Agendamento from './Agendamento';
+import Questionario from './Questionario';
+
 export default {
+    components:{
+        Agendamento,
+        Questionario
+    },
     created: function(){
         this.carregarStatus();
+        this.checkAgendamento();
     },
     data: () => ({
         requiredRule: [
             v => (!!v) || 'Campo é requirido'
         ],
-        listStatus:[]
+        listStatus:[],
+        agendamentoResult:{}
     }),
     methods:{
+        checkAgendamento(){
+            this.$http.get("/verifica-agendamento").then((res)=>{
+                if(res.status == 204){
+                    this.agendamentoResult = null;
+                }else{
+                    this.agendamentoResult = res.data;
+                }
+                
+            });
+        },
         carregarStatus(){
             this.$http.get("/acompanhamento-pessoa/",{
                 params:{

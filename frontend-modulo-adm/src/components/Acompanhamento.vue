@@ -13,45 +13,14 @@
                 
             </v-card-title>
             <v-card-text>
-                <v-timeline :dense="$vuetify.breakpoint.smAndDown" :reverse="true">
-                    <v-timeline-item
-                        color="blue lighten-1"
-                        fill-dot
-                        >
-                        <v-card>
-                            <v-card-title class="blue lighten-1">
-                                <v-icon
-                                    dark
-                                    size="32"
-                                    class="mr-4"
-                                >
-                                    check
-                                </v-icon>
-                                <h2 class="subtitle-1 white--text font-weight-light">Pré-Cadastro Realizado</h2>
-                            </v-card-title>
-                        </v-card>
-                    </v-timeline-item>
-
-                    <v-timeline-item
-                        :color="status.passou=='T'?'blue lighten-1':'red lighten-1'"
-                        fill-dot
-                        v-for="status in listStatus"
-                        :key="status"
-                        >
-                        <v-card>
-                            <v-card-title class="lighten-1" :class="status.passou=='T'?'blue':'red'">
-                                <v-icon
-                                    dark
-                                    size="32"
-                                    class="mr-4"
-                                >
-                                    {{status.passou=='T'?'check':'mdi-cancel'}}
-                                </v-icon>
-                                <h2 class="subtitle-1 white--text font-weight-light">{{status.descricao}}</h2>
-                            </v-card-title>
-                        </v-card>
-                    </v-timeline-item>
-                </v-timeline>
+                <v-row>
+                    <v-col cols="6">
+                        <v-btn style="width:100%" color="primary" text @click="realizarTriagem()" large :loading="loading" outlined>Pré-Triagem</v-btn>
+                    </v-col>
+                    <v-col cols="6">
+                        <v-btn style="width:100%" color="primary" text @click="agendarDoacao()" large :loading="loading" outlined>Agendar Doação</v-btn>
+                    </v-col>    
+                </v-row>
             </v-card-text>
         </v-card>
     </v-container>
@@ -80,6 +49,12 @@ export default {
                     this.$router.push({name: 'questionario'},{});
                 }
             })
+        },
+        agendarDoacao(){
+            
+        },
+        realizarTriagem(){
+
         }
     },
     computed:{

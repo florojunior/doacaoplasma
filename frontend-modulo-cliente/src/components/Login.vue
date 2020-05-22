@@ -86,7 +86,7 @@
             },
             () =>{
                 this.isLoading = false;
-                alert('Usuário ou senha inválidos!');
+                alert('Usuario ou senha invalidos!');
             })
         },
     }

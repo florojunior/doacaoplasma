@@ -3,7 +3,7 @@
         <v-row align="center" align-content="stretch" justify="end">
             <v-col cols="12">
                 <div class="display">
-                    Lista de Voluntários
+                    Lista de Voluntarios
                 </div>
             </v-col>  
         </v-row>
@@ -39,7 +39,7 @@
           >
             <v-card>
                 <v-card-title>
-                    <span class="headline">Respostas do Voluntário</span>
+                    <span class="headline">Respostas do Voluntario</span>
                 </v-card-title>
                 <v-card-text>
                     <v-container>
@@ -96,6 +96,7 @@ export default {
   },
   parametroList: [],
   data: () => ({
+    isLoading: false,
     sucessMessage: false,
     dialog: false,
     parametro: {},
