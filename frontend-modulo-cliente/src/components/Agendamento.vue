@@ -49,6 +49,7 @@
                   <v-card-text>
                       <v-container>
                           <v-row>
+                            {{agendamento}}
                               <v-col cols="12" sm="12">
                                 <v-select
                                   v-model="agendamento.codigoLocalAgendamento"
@@ -57,8 +58,7 @@
                                   label="Selecione o local"
                                   required
                                   item-text="descricao" 
-                                  item-value="codigo"
-                                  :loading="isLoading"                       
+                                  item-value="codigo"                      
                                 ></v-select>
                               </v-col>
                               <v-col>
@@ -201,13 +201,15 @@ export default {
         this.agendamento.data = this.picker;
         this.agendamento.status = "T";
         this.agendamento.hora = this.horarioSelecionado.hora;
+        this.agendamento.codigoLocalAgendamento =parseInt(this.agendamento.codigoLocalAgendamento);   
         if(this.agendamento.codigo==null){
           this.agendamento.ativo='T';
-          this.sucessMessage = true;
+
           this.insert(this.agendamento).then(() => {
               this.dialog=false;
               this.getAll();
               this.isLoading = false;
+              this.sucessMessage = true;
               setTimeout(()=>{ this.sucessMessage = false; }, 3000);
         })
         }else{
