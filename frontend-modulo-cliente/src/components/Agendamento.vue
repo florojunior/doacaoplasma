@@ -49,10 +49,9 @@
                   <v-card-text>
                       <v-container>
                           <v-row>
-                            {{agendamento}}
                               <v-col cols="12" sm="12">
                                 <v-select
-                                  v-model="agendamento.codigoLocalAgendamento"
+                                  v-model="agendamento.codigoLocalAgendamento_ref"
                                   :items="localList"
                                   :rules="requiredRule" 
                                   label="Selecione o local"
@@ -199,9 +198,9 @@ export default {
       this.isLoading = true;
       if(this.$refs.form.validate()){
         this.agendamento.data = this.picker;
-        this.agendamento.status = "T";
+        this.agendamento.status = "AG";
         this.agendamento.hora = this.horarioSelecionado.hora;
-        this.agendamento.codigoLocalAgendamento =parseInt(this.agendamento.codigoLocalAgendamento);   
+        this.agendamento.codigoLocalAgendamento = this.agendamento.codigoLocalAgendamento_ref.toString();
         if(this.agendamento.codigo==null){
           this.agendamento.ativo='T';
 
@@ -261,8 +260,8 @@ export default {
     update(agendamento){
       return this.$http.put('/agendamento',agendamento);
     },
-    insert(agendamento){
-      return this.$http.post('/agendamento',agendamento);
+    insert(){
+      return this.$http.post('/agendamento',this.agendamento);
     },
     getColor (ativo) {
         if (ativo == 'T') return 'green'

@@ -34,7 +34,6 @@
                                     </div>
                                 </v-card>
                             </v-col>
-                            {{ isLoading}}
                             <v-col cols="12" v-if="agendamentoResult==null && !isLoading" md="6" lg="6" xl="6">
                                 <v-card
                                     color="green"
@@ -119,6 +118,7 @@ export default {
         requiredRule: [
             v => (!!v) || 'Campo é requirido'
         ],
+        isLoading: false,
         listStatus:[],
         agendamentoResult:null,
         overlay: false
